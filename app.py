@@ -10,12 +10,7 @@
 import json
 import requests
 import settings
-
-credentials = {
-    'endpoint': settings.VIRK_DK_ENDPOINT,
-    'username': settings.VIRK_DK_USERNAME,
-    'password': settings.VIRK_DK_PASSWORD,
-}
+from jinja2 import Template
 
 # input_file must be utf-8 encoded.
 input_file = open(settings.INPUT_FILE, "r")
@@ -29,9 +24,35 @@ for line in input_file:
     husnr = addr_line_array[1].rsplit(" ", 1)[1]
     postnr = addr_line_array[2].split(" ")[0]
 
-    print("{0} - {1} - {2} - {3}".format(navn, vejnavn, husnr, postnr))
+    with open(settings.QUERY_TEMPLATE, "r") as filestream:
+        template_string = filestream.read()
 
+    template_object = Template(template_string)
+
+    populate_template = template_object.render(
+        navn=navn,
+        vejnavn=vejnavn,
+        husnr=husnr,
+        postnr=postnr
+    )
+
+    url = settings.VIRK_DK_ENDPOINT
+    usr = settings.VIRK_DK_USERNAME
+    pwd = settings.VIRK_DK_PASSWORD
+    headers = {'Content-type': 'application/json'}
+    
+    r = requests.post(
+        url, 
+        auth=(usr, pwd),
+        data=populate_template,
+        headers=headers
+        )
+
+    response_body = print(r.text)
+
+    break 
     # TODO
     # Create function to build JSON query
 
 input_file.close()
+

@@ -1,0 +1,18 @@
+{
+    "_source": [
+        "Vrvirksomhed.cvrNummer",
+        "Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn",
+        "Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse"
+    ],
+    "query": {
+        "query_string": {
+            "fields": [
+                "Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn",
+                "Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.vejnavn",
+                "Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.kommune.kommuneNavn"
+            ],
+            "query": "(Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn:{{ navn }} AND Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.vejnavn:{{ vejnavn }} AND Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.husnummerFra:{{ husnr }} AND Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.postnummer:{{ postnr }})"
+        }
+    },
+    "size": 1
+}
