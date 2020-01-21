@@ -24,7 +24,7 @@ for line in input_file:
 
     addr_line_array = line.split(";")
 
-    navn = addr_line_array[0].replace("/", "\\\\/") 
+    navn = addr_line_array[0].replace("/", "\\\\/")
     vejnavn = addr_line_array[1].rsplit(" ", 1)[0]
     husnr = addr_line_array[1].rsplit(" ", 1)[1]
     postnr = addr_line_array[2].split(" ")[0]
@@ -48,9 +48,9 @@ for line in input_file:
     pwd = settings.VIRK_DK_PASSWORD
     headers = {"Content-type": "application/json; charset=UTF-8"}
     payload = json.loads(populated_template)
-    
+
     resp = requests.post(
-        url, 
+        url,
         auth=(usr, pwd),
         json=payload,
         headers=headers
@@ -60,26 +60,33 @@ for line in input_file:
         try:
             resp_len = len(json.loads(resp.text).get("hits").get("hits"))
             if resp_len == 1:
-                virksomhed = json.loads(resp.text).get("hits").get("hits")[0].get("_source").get("Vrvirksomhed")
-                cvrNo = virksomhed.get("cvrNummer", "NODATA")
-                r_navn = virksomhed.get("virksomhedMetadata").get("nyesteNavn").get("navn", "NODATA")
-                r_adresse = virksomhed.get("virksomhedMetadata").get("nyesteBeliggenhedsadresse")
+                hits = json.loads(resp.text).get("hits").get("hits")
+                virksomhed = hits[0].get("_source").get("Vrvirksomhed")
+                cvr_no = virksomhed.get("cvrNummer", "NODATA")
+                virk_meta = virksomhed.get("virksomhedMetadata")
+                r_navn = virk_meta.get("nyesteNavn").get("navn", "NODATA")
+                r_adresse = virk_meta.get("nyesteBeliggenhedsadresse")
                 r_vejnavn = r_adresse.get("vejnavn", "NODATA")
                 r_husnr = r_adresse.get("husnummerFra", "NODATA")
-                r_postnr = r_adresse.get("postnummer", "NODATA")           
-                success_file.write(f"{cvrNo};{r_navn};{r_vejnavn};{r_husnr};{r_postnr};{search_params};\n")
+                r_postnr = r_adresse.get("postnummer", "NODATA")
+                success_file.write(f"""{cvr_no};
+                                    {r_navn};
+                                    {r_vejnavn};
+                                    {r_husnr};
+                                    {r_postnr};
+                                    {search_params};
+                                    \n""")
             else:
-                failed_file.write(f"Firmanavn findes ikke på virk.dk -->{line}\n")
+                failed_file.write(f"Firma findes ikke -->{line}\n")
         except AttributeError as ae:
                 failed_file.write(f"AttributeError -->{ae}\n")
                 print(ae)
 
     else:
-        failed_file.write(f"HTTP Error -->{resp.status_code}\nHTTP Response Body --> {resp.text}\n\n")
+        failed_file.write(f"""HTTP Error -->{resp.status_code}\n
+                        HTTP Response Body --> {resp.text}\n""")
         print(populated_template)
 
 input_file.close()
 success_file.close()
 failed_file.close()
-
-
