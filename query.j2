@@ -11,7 +11,7 @@
                 "Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.vejnavn",
                 "Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.kommune.kommuneNavn"
             ],
-            "query": "(Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn:{{ navn }} AND Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.vejnavn:{{ vejnavn }} AND Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.husnummerFra:{{ husnr }} AND Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.postnummer:{{ postnr }})"
+            "query": "(Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn:{{ navn }} AND Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.vejnavn:{{ vejnavn }} AND Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.husnummerFra:{{ husnr }}{% if postnr|length %} AND Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.postnummer:{{ postnr }}{% endif %})"
         }
     },
     "size": 1
