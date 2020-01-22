@@ -12,11 +12,23 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/magenta-aps/cvr-lookup",
-    packages=setuptools.find_packages(),
+    packages=['cvr-lookup'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Mozilla Public License Version 2.0",
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
+    install_requires=[
+        'certifi',
+        'chardet',
+        'idna',
+        'Jinja2',
+        'MarkupSafe',
+        'requests',
+        'urllib3',
+    ],
+    package_data={
+        'cvr-lookup': ['query.j2']
+    }
 )
