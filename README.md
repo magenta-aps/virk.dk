@@ -4,7 +4,7 @@
 
 Python intergration with **distribution.virk.dk/cvr-permanent/virksomhed/_search**.
 
-Developed by MAGENTA ApS as a part of project for The Danish Environmental Protection Agency, a.k.a. "Miljøstyrelsen".
+*Developed by MAGENTA ApS as a part of project for The Danish Environmental Protection Agency, a.k.a. "Miljøstyrelsen".*
 
 ### Prerequisite
 
@@ -19,7 +19,7 @@ Mozilla Public License Version 2.0
   - **get_cvr_no(credentials, company_name, streetname, house_no, zipcode)**
   *Retrieves the unique identifier of a given company/organisation.*
 
-### Upcoming features
+### Upcoming feature(s)
 
   - **get_org_info(credentials, cvr_no)**
   *Retrieves the all registered information about a given company/organisation.*
@@ -27,8 +27,6 @@ Mozilla Public License Version 2.0
 ### Installation ()
 
 CVR Lookup requires [Python](https://www.python.org/) v3.6.+ to run.
-
-Install the dependencies and devDependencies and start the server.
 
 ```sh
 $ pip install cvr-lookup
