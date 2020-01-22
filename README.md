@@ -28,10 +28,6 @@ Mozilla Public License Version 2.0
 
 CVR Lookup requires [Python](https://www.python.org/) v3.6.+ to run.
 
-```sh
-$ pip install cvr-lookup
-```
-
 ### Example of implementation
 
 *PENDING ...*
