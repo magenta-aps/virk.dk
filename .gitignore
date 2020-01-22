@@ -1,3 +1,4 @@
+/settings.py
 *.csv
 *.env
 __pycache__
