@@ -1,6 +1,6 @@
 [![](https://www.magenta.dk/wp-content/uploads/2019/03/cropped-magenta_logo-2.png)](https://magenta.dk)
 
-# CVR Lookup (EARLY DEVELOPMENT STAGES - NOT READY!)
+# CVR Lookup (EARLY DEVELOPMENT STAGES - NOT READY TO USE!)
 
 Python intergration with **distribution.virk.dk/cvr-permanent/virksomhed/_search**.
 
