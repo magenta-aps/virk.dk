@@ -28,7 +28,6 @@ setuptools.setup(
         'requests',
         'urllib3',
     ],
-    package_data={
-        'cvr-lookup': ['query.j2']
-    }
+    package_data={'cvr-lookup': ['query.j2']},
+    include_package_data=True,
 )

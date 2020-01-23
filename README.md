@@ -8,7 +8,7 @@ Python intergration with **distribution.virk.dk/cvr-permanent/virksomhed/_search
 
 ### Prerequisite
 
-The API is free of charge, but requires username and password from The Danish Business Authority (cvrselvbetjening@erst.dk)
+The virk.dk's API is free of charge, but requires username and password from The Danish Business Authority (cvrselvbetjening@erst.dk)
 
 ### License
 
