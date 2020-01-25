@@ -13,8 +13,7 @@ from jinja2 import Template
 
 
 def get_cvr_no(params_dict):
-    """returns a dictionary if all parameters passed. If not then the 
-    function will return None.
+    """Explanation pending
     """
 
     virk_usr = params_dict.get("virk_usr", None)
@@ -34,7 +33,8 @@ def get_cvr_no(params_dict):
 
             navn = org_name.replace("/", "\\\\/")
             vejnavn = street_name
-            hus_nr_fra = house_no_from # TODO: letters need to be separated query param !
+            # TODO: house letters need to be separate query param!
+            hus_nr_fra = house_no_from
             postnr = zipcode
 
             with open("query.js", "r") as filestream:
@@ -63,55 +63,52 @@ def get_cvr_no(params_dict):
                 )
 
             if resp.status_code is 200:
-                
+
                 try:
 
-                    resp_len = len(json.loads(resp.text).get("hits").get("hits"))
-                    
+                    resp_len = len(json.loads(
+                        resp.text).get("hits").get("hits")
+                        )
+
                     if resp_len == 1:
 
                         hits = json.loads(resp.text).get("hits").get("hits")
                         virksomhed = hits[0].get("_source").get("Vrvirksomhed")
-                        cvr_no = virksomhed.get("cvrNummer", "NODATA")
+                        cvr_no = virksomhed.get("cvrNummer", "")
                         virk_meta = virksomhed.get("virksomhedMetadata")
-                        r_navn = virk_meta.get("nyesteNavn").get("navn", "NODATA")
+                        r_navn = virk_meta.get("nyesteNavn").get("navn", "")
                         r_adresse = virk_meta.get("nyesteBeliggenhedsadresse")
-                        r_vejnavn = r_adresse.get("vejnavn", "NODATA")
-                        r_husnr = r_adresse.get("husnummerFra", "NODATA")
-                        r_postnr = r_adresse.get("postnummer", "NODATA")
-                        success_file.write(f"""{cvr_no};
-                                            {r_navn};
-                                            {r_vejnavn};
-                                            {r_husnr};
-                                            {r_postnr};
-                                            {search_params};
-                                            \n""")
+                        r_vejnavn = r_adresse.get("vejnavn", "")
+                        r_husnr = r_adresse.get("husnummerFra", "")
+                        r_postnr = r_adresse.get("postnummer", "")
+
+                        return f"""{cvr_no};
+                                   {r_navn};
+                                   {r_vejnavn};
+                                   {r_husnr};
+                                   {r_postnr};
+                                   {search_params};
+                                   \n""")
+
                     else:
 
-                        failed_file.write(f"Firma findes ikke -->{line}\n")
+                        return f"No hit for --> {navn}"
 
                 except AttributeError as ae:
 
-                        failed_file.write(f"AttributeError -->{ae}\n")
+                    return f"AttributeError --> {ae}"
 
-                        print(ae)
+            else: # if resp.status_code ...
 
-            else:
-                failed_file.write(f"""HTTP Error -->{resp.status_code}\n
-                                HTTP Response Body --> {resp.text}\n""")
-                print(populated_template)
+                return f"""HTTP Error --> {resp.status_code}\n
+                        HTTP Response Body --> {resp.text}"""
 
-            return {
-                "result": navn
-            }
+        else: # if org_name ....
 
-    else:
+            return """ERROR: Company name and/or address info
+                        missing in input dictionary."""
 
-        return None
+    else: # if virk_usr and ...
 
-    
-    
-
-
-
-
+        return """ERROR: Url and/or user credentials
+                    are missing in input dictionary."""
