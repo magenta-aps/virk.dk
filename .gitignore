@@ -1,6 +1,4 @@
 *.csv
-*.env
 __pycache__
 *.json
-*.test
-settings.py
+*test*

@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="cvr-lookup",
+    name="cvr_lookup",
     version="0.0.1",
     author="Heini Leander Ovason",
     author_email="heini.ovason@gmail.com",
@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/magenta-aps/cvr-lookup",
-    packages=['cvr-lookup'],
+    packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Mozilla Public License Version 2.0",
@@ -28,6 +28,6 @@ setuptools.setup(
         'requests',
         'urllib3',
     ],
-    package_data={'cvr-lookup': ['query.j2']},
+    package_data={'cvr_lookup': ['query.j2']},
     include_package_data=True,
 )
