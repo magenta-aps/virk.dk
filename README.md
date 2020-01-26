@@ -1,10 +1,12 @@
-[![](https://www.magenta.dk/wp-content/uploads/2019/03/cropped-magenta_logo-2.png)](https://magenta.dk)
+<a href="https://magenta.dk" target="_blank">
+  <img src="https://www.magenta.dk/wp-content/uploads/2019/03/cropped-magenta_logo-2.png" alt="Magenta ApS" width="400">
+</a>
 
-# Virk.dk (EARLY DEVELOPMENT STAGES - NOT READY TO USE!)
+## DUE TO EARLY DEVELOPMENT STAGES USE WITH CAUTION COMPREHENSIVE CHANGES TO E.G. API MIGHT OCCUR.
 
 Python intergration with **distribution.virk.dk/cvr-permanent/virksomhed/_search**.
 
-*Developed by MAGENTA ApS as a part of project for The Danish Environmental Protection Agency, a.k.a. "Miljøstyrelsen".*
+*Developed by MAGENTA ApS as a part of project for The Danish Environmental Protection Agency.*
 
 ### Prerequisite
 
@@ -28,6 +30,29 @@ Mozilla Public License Version 2.0
 
 CVR Lookup requires [Python](https://www.python.org/) v3.6.+ to run.
 
+Download, and go to project folder, and run:
+
+```sh
+$ python setup.py install
+```
+
 ### Example of implementation
 
-*PENDING ...*
+```
+from virk_dk import get_cvr_no
+
+input_dict =	{
+  "virk_usr": "USERNAME",
+  "virk_pwd": "PASSWORD",
+  "virk_url": "http://distribution.virk.dk/cvr-permanent/virksomhed/_search", # note that this could change at some point.
+  "org_name": "MAGENTA ApS",
+  "street_name": "Pilestræde",
+  "house_no_from": "43",
+  "zipcode": "1112"
+}
+
+result = get_cvr_no(params_dict=input_dict)
+
+print(result)
+```
+

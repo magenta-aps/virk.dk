@@ -105,7 +105,8 @@ def get_cvr_no(params_dict):
 
                     return "AttributeError --> {0}".format(ae)
 
-            else: # if resp.status_code ...
+            # if resp.status_code ...
+            else:
 
                 # TODO: log(input, err) - Remove return statement
 
@@ -114,16 +115,18 @@ def get_cvr_no(params_dict):
                     resp.text
                     )
 
-        else: # if org_name ....
+        # if org_name ....
+        else:
 
             # TODO: log(input, err) - Remove return statement
 
             return "ERROR: Company name and/or address info" \
                     " missing in input dictionary."
 
-    else: # if virk_usr and ...
+    # if virk_usr and ...
+    else:
 
         # TODO: log(input, err) - Remove return statement
-        
+
         return "ERROR: Url and/or user credentials" \
-                " are missing in input dictionary." 
+                " are missing in input dictionary."
