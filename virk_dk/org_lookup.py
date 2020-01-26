@@ -7,6 +7,7 @@
 # Contributor(s): Heini L. Ovason
 #
 
+import os
 import json
 import requests
 from jinja2 import Template
@@ -37,7 +38,9 @@ def get_cvr_no(params_dict):
             hus_nr_fra = house_no_from
             postnr = zipcode
 
-            with open("query.js", "r") as filestream:
+            here = os.path.dirname(os.path.abspath(__file__))
+            template = os.path.join(here, 'query.j2')
+            with open(template, "r") as filestream:
                 template_string = filestream.read()
 
             template_object = Template(template_string)
@@ -82,33 +85,45 @@ def get_cvr_no(params_dict):
                         r_husnr = r_adresse.get("husnummerFra", "")
                         r_postnr = r_adresse.get("postnummer", "")
 
-                        return f"""{cvr_no};
-                                   {r_navn};
-                                   {r_vejnavn};
-                                   {r_husnr};
-                                   {r_postnr};
-                                   {search_params};
-                                   \n""")
+                        return {
+                            "cvr_no": cvr_no,
+                            "navn": r_navn,
+                            "vejnavn": r_vejnavn,
+                            "husnr": r_husnr,
+                            "postnr": r_postnr
+                        }
 
                     else:
 
-                        return f"No hit for --> {navn}"
+                        # TODO: log(input, err) - Remove return statement
+
+                        return "No hit for -->{0}".format(navn)
 
                 except AttributeError as ae:
 
-                    return f"AttributeError --> {ae}"
+                    # TODO: log(input, err) - Remove return statement
+
+                    return "AttributeError --> {0}".format(ae)
 
             else: # if resp.status_code ...
 
-                return f"""HTTP Error --> {resp.status_code}\n
-                        HTTP Response Body --> {resp.text}"""
+                # TODO: log(input, err) - Remove return statement
+
+                return "HTTP Error --> {0}\nHTTP Body --> {1}".format(
+                    resp.status_code,
+                    resp.text
+                    )
 
         else: # if org_name ....
 
-            return """ERROR: Company name and/or address info
-                        missing in input dictionary."""
+            # TODO: log(input, err) - Remove return statement
+
+            return "ERROR: Company name and/or address info" \
+                    " missing in input dictionary."
 
     else: # if virk_usr and ...
 
-        return """ERROR: Url and/or user credentials
-                    are missing in input dictionary."""
+        # TODO: log(input, err) - Remove return statement
+        
+        return "ERROR: Url and/or user credentials" \
+                " are missing in input dictionary." 

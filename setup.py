@@ -4,14 +4,14 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="cvr_lookup",
+    name="virk_dk",
     version="0.0.1",
     author="Heini Leander Ovason",
     author_email="heini.ovason@gmail.com",
     description="Integration with The Danish Business Authority Web API.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/magenta-aps/cvr-lookup",
+    url="https://github.com/magenta-aps/virk_dk",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -28,6 +28,6 @@ setuptools.setup(
         'requests',
         'urllib3',
     ],
-    package_data={'cvr_lookup': ['query.j2']},
+    package_data={'virk_dk': ['query.j2']},
     include_package_data=True,
 )
