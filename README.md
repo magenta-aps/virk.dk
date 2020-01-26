@@ -32,10 +32,11 @@ Download, and go to project folder, and run:
 
 ```sh
 $ python setup.py install
-´´´
+```
 
 ### Example of implementation
 
+```
 from virk_dk import get_cvr_no
 
 input_dict =	{
@@ -51,4 +52,5 @@ input_dict =	{
 result = get_cvr_no(params_dict=input_dict)
 
 print(result)
+```
 
