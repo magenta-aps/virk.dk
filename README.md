@@ -4,7 +4,7 @@
 
 Python intergration with **distribution.virk.dk/cvr-permanent/virksomhed/_search**.
 
-*Developed by MAGENTA ApS as a part of project for The Danish Environmental Protection Agency, a.k.a. "Miljøstyrelsen".*
+*Developed by MAGENTA ApS as a part of project for The Danish Environmental Protection Agency.*
 
 ### Prerequisite
 
