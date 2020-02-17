@@ -1,4 +1,6 @@
-![](https://www.magenta.dk/wp-content/uploads/2019/03/cropped-magenta_logo-2.png | width=500)
+<a href="https://magenta.dk">
+  <img src="https://www.magenta.dk/wp-content/uploads/2019/03/cropped-magenta_logo-2.png" alt="Magenta ApS" width="300">
+</a>
 
 # Virk.dk 
 
