@@ -2,7 +2,7 @@
   <img src="https://www.magenta.dk/wp-content/uploads/2019/03/cropped-magenta_logo-2.png" alt="Magenta ApS" width="400">
 </a>
 
-# WARNING: DUE TO EARLY DEVELOPMENT STAGES USE WITH CAUTION. COMPREHENSIVE CHANGES TO E.G. API MIGHT OCCUR
+<b style='color:red'>DUE TO EARLY DEVELOPMENT STAGES USE WITH CAUTION COMPREHENSIVE CHANGES TO E.G. API MIGHT OCCUR.</b>
 
 Python intergration with **distribution.virk.dk/cvr-permanent/virksomhed/_search**.
 
