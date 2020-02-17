@@ -1,4 +1,4 @@
-![](https://www.magenta.dk/wp-content/uploads/2019/03/cropped-magenta_logo-2.png | height=100)(https://magenta.dk)
+![](https://www.magenta.dk/wp-content/uploads/2019/03/cropped-magenta_logo-2.png | height=35)
 
 # Virk.dk 
 
