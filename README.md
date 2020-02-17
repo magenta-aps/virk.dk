@@ -2,8 +2,6 @@
   <img src="https://www.magenta.dk/wp-content/uploads/2019/03/cropped-magenta_logo-2.png" alt="Magenta ApS" width="500">
 </a>
 
-# Virk.dk Python integration
-
 # WARNING: DUE TO EARLY DEVELOPMENT STAGES USE WITH CAUTION. COMPREHENSIVE CHANGES TO E.G. API MIGHT OCCUR
 
 Python intergration with **distribution.virk.dk/cvr-permanent/virksomhed/_search**.
