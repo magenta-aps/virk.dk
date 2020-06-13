@@ -66,23 +66,7 @@ def get_org_info(params_dict):
 
                     if resp_len == 1:
 
-                        hits = json.loads(resp.text).get("hits").get("hits")
-                        virksomhed = hits[0].get("_source").get("Vrvirksomhed")
-                        cvr_no = virksomhed.get("cvrNummer", "")
-                        virk_meta = virksomhed.get("virksomhedMetadata")
-                        r_navn = virk_meta.get("nyesteNavn").get("navn", "")
-                        r_adresse = virk_meta.get("nyesteBeliggenhedsadresse")
-                        r_vejnavn = r_adresse.get("vejnavn", "")
-                        r_husnr = r_adresse.get("husnummerFra", "")
-                        r_postnr = r_adresse.get("postnummer", "")
-
-                        return {
-                            "cvr_no": cvr_no,
-                            "navn": r_navn,
-                            "vejnavn": r_vejnavn,
-                            "husnr": r_husnr,
-                            "postnr": r_postnr
-                        }
+                        return resp.text
 
                     else:
 
@@ -111,8 +95,7 @@ def get_org_info(params_dict):
 
             # TODO: log(input, err) - Remove return statement
 
-            return "ERROR: Company name and/or address info" \
-                    " missing in input dictionary."
+            return "ERROR: CVR Number missing in input dictionary."
 
     # if virk_usr and ...
     else:
