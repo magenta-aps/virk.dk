@@ -8,7 +8,7 @@ Initiated by MAGENTA ApS as a part of a *Proof Of Concept* for The Danish Enviro
 
 ### Prerequisite
 
-The API is free of charge, but requires username and password from The Danish Business Authority (cvrselvbetjening@erst.dk)
+The API requires a service account and token from The Danish Business Authority. They can be reached at: cvrselvbetjening@erst.dk
 
 ### License
 
