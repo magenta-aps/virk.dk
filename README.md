@@ -35,8 +35,9 @@ virk.dk requires [Python](https://www.python.org/) v3.6+
 
 ```sh
 $ virtualenv -p python3 test_package
-$ cd test_package && mkdir src
+$ cd test_package
 $ . bin/activate
+$ mkdir src && cd src
 $ git clone git@github.com:magenta-aps/virk.dk.git 
 $ cd virk.dk && python setup.py install
 ```
