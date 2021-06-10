@@ -2,7 +2,7 @@
   <img src="https://www.magenta.dk/wp-content/uploads/2019/03/cropped-magenta_logo-2.png" alt="Magenta ApS" width="400">
 </a>
 
-## DUE TO EARLY DEVELOPMENT STAGE
+## DUE TO EARLY DEVELOPMENT STAGE THERE'S THE RISK OF QWERKS
 
 Python intergration with **distribution.virk.dk/cvr-permanent/virksomhed/_search**.
 
