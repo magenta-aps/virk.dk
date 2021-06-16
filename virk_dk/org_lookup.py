@@ -11,12 +11,10 @@ import os
 import json
 import requests
 
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+from jinja2 import Environment, PackageLoader, select_autoescape
 
 env = Environment(
-    loader=FileSystemLoader(
-        os.path.join(os.path.dirname(__file__), 'templates')
-    ),
+    loader=PackageLoader("virk_dk"),
     autoescape=select_autoescape()
 )
 
