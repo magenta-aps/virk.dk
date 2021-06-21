@@ -7,7 +7,6 @@
 # Contributor(s): Heini L. Ovason, Søren Howe Gersager
 #
 
-import os
 import json
 import requests
 
@@ -17,6 +16,7 @@ env = Environment(
     loader=PackageLoader("virk_dk"),
     autoescape=select_autoescape()
 )
+
 
 def extract_org_info_from_virksomhed(org_dict):
     virksomhed = org_dict.get("_source").get("Vrvirksomhed")
@@ -60,6 +60,7 @@ def extract_org_info_from_produktionsenhed(org_dict):
         "postnr": r_postnr,
         "branchekode": r_branchekode,
     }
+
 
 def get_cvr_no(params_dict):
     """Explanation pending
@@ -227,8 +228,7 @@ def get_org_info_from_p_number(params_dict):
     resp = requests.post(
         virk_url,
         auth=(virk_usr, virk_pwd),
-        json=json.loads(populated_template),
-        headers={"Content-type": "application/json; charset=UTF-8"}
+        json=json.loads(populated_template)
     )
     if not resp.status_code == 200:
         print(resp.status_code, resp.text)
@@ -240,5 +240,46 @@ def get_org_info_from_p_number(params_dict):
 
     for org in hits:
         org_info = extract_org_info_from_produktionsenhed(org)
+        orgs.append(org_info)
+    return orgs
+
+
+def get_org_info_from_cvr_p_number_or_name(params_dict):
+    """
+    Return an org_info dict from a general search on CVR/P number/Name.
+    """
+    template = env.get_template('get_org_info_from_cvr_p_number_or_name.j2')
+
+    virk_usr = params_dict.get("virk_usr", None)
+    virk_pwd = params_dict.get("virk_pwd", None)
+    virk_url = params_dict.get("virk_url", None)
+
+    if not virk_usr or not virk_pwd or not virk_url:
+        return ("ERROR: Url and/or user credentials"
+                " are missing in input dictionary.")
+
+    search_term = params_dict.get("search_term", None)
+    if not search_term:
+        return ("ERROR: Search term is missing in input dictionary.")
+
+    populated_template = template.render(
+        search_term=search_term
+    )
+
+    resp = requests.post(
+        virk_url,
+        auth=(virk_usr, virk_pwd),
+        json=json.loads(populated_template),
+    )
+    if not resp.status_code == 200:
+        print(resp.status_code, resp.text)
+        return
+
+    hits = resp.json().get("hits").get("hits")
+
+    orgs = []
+
+    for org in hits:
+        org_info = extract_org_info_from_virksomhed(org)
         orgs.append(org_info)
     return orgs
