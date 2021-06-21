@@ -1,0 +1,13 @@
+{
+   "query":{
+      "bool":{
+         "should":[
+            {
+               "term":{"Vrvirksomhed.cvrNummer": {{search_term}}},
+               "term":{"Vrvirksomhed.penheder.pNummer": {{search_term}}},
+               "term":{"Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn": {{search_term}}}
+            }
+         ]
+      }
+   }
+}
