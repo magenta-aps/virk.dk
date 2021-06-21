@@ -2,7 +2,8 @@
     "_source": [
         "Vrvirksomhed.cvrNummer",
         "Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn",
-        "Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse"
+        "Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse",
+        "Vrvirksomhed.virksomhedMetadata.nyesteHovedbranche"
     ],
     "query": {
         "query_string": {
@@ -11,7 +12,7 @@
                 "Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.vejnavn",
                 "Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.kommune.kommuneNavn"
             ],
-            "query": "(Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn:{{ navn }} AND Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.vejnavn:{{ vejnavn }} AND Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.husnummerFra:{{ hus_nr_fra }}{% if postnr|length %} AND Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.postnummer:{{ postnr }}{% endif %})"
+            "query": "(Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn:{{ navn }} OR Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.vejnavn:{{ vejnavn }} AND Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.husnummerFra:{{ hus_nr_fra }}{% if postnr|length %} AND Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.postnummer:{{ postnr }}{% endif %})"
         }
     },
     "size": 1

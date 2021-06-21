@@ -95,7 +95,6 @@ def get_cvr_no(params_dict):
                 hus_nr_fra=hus_nr_fra,
                 postnr=postnr
             )
-
             url = virk_url
             usr = virk_usr
             pwd = virk_pwd
@@ -113,14 +112,11 @@ def get_cvr_no(params_dict):
 
                 try:
 
-                    resp_len = len(json.loads(
-                        resp.text).get("hits").get("hits")
-                        )
+                    resp_len = len(resp.json().get("hits").get("hits"))
 
                     if resp_len == 1:
-
-                        hits = json.loads(resp.text).get("hits").get("hits")
-                        org_info = extract_org_info(hits[0])
+                        hits = resp.json().get("hits").get("hits")
+                        org_info = extract_org_info_from_virksomhed(hits[0])
                         return org_info
                     else:
 
@@ -265,16 +261,15 @@ def get_org_info_from_cvr_p_number_or_name(params_dict):
     populated_template = template.render(
         search_term=search_term
     )
-
+    payload = json.loads(populated_template)
     resp = requests.post(
         virk_url,
         auth=(virk_usr, virk_pwd),
-        json=json.loads(populated_template),
+        json=payload,
     )
     if not resp.status_code == 200:
         print(resp.status_code, resp.text)
         return
-
     hits = resp.json().get("hits").get("hits")
 
     orgs = []
