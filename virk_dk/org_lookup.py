@@ -23,6 +23,7 @@ def extract_org_info_from_virksomhed(org_dict):
     cvr_no = virksomhed.get("cvrNummer", "")
     virk_meta = virksomhed.get("virksomhedMetadata")
     hoved_branche = virk_meta.get("nyesteHovedbranche")
+    r_status = virk_meta.get("sammensatStatus")
     r_branchekode = hoved_branche.get("branchekode")
     r_navn = virk_meta.get("nyesteNavn").get("navn", "")
     r_adresse = virk_meta.get("nyesteBeliggenhedsadresse")
@@ -37,28 +38,7 @@ def extract_org_info_from_virksomhed(org_dict):
         "husnr": r_husnr,
         "postnr": r_postnr,
         "branchekode": r_branchekode,
-    }
-
-
-def extract_org_info_from_produktionsenhed(org_dict):
-    prod = org_dict.get("_source").get("VrproduktionsEnhed")
-    prod_meta = prod.get("produktionsEnhedMetadata")
-    cvr_no = prod_meta.get("nyesteCvrNummerRelation", "")
-    hoved_branche = prod_meta.get("nyesteHovedbranche")
-    r_branchekode = hoved_branche.get("branchekode")
-    r_navn = prod_meta.get("nyesteNavn").get("navn", "")
-    r_adresse = prod_meta.get("nyesteBeliggenhedsadresse")
-    r_vejnavn = r_adresse.get("vejnavn", "")
-    r_husnr = r_adresse.get("husnummerFra", "")
-    r_postnr = r_adresse.get("postnummer", "")
-
-    return {
-        "cvr_no": cvr_no,
-        "navn": r_navn,
-        "vejnavn": r_vejnavn,
-        "husnr": r_husnr,
-        "postnr": r_postnr,
-        "branchekode": r_branchekode,
+        "status": r_status,
     }
 
 
@@ -195,47 +175,6 @@ def get_org_info_from_cvr(params_dict):
 
     for org in hits:
         org_info = extract_org_info_from_virksomhed(org)
-        orgs.append(org_info)
-    return orgs
-
-
-def get_org_info_from_p_number(params_dict):
-    """
-    Return an org_info dict from a p_number.
-    """
-    template = env.get_template('get_org_info_from_p_number.j2')
-
-    virk_usr = params_dict.get("virk_usr", None)
-    virk_pwd = params_dict.get("virk_pwd", None)
-    virk_url = params_dict.get("virk_url", None)
-
-    if not virk_usr or not virk_pwd or not virk_url:
-        return ("ERROR: Url and/or user credentials"
-                " are missing in input dictionary.")
-
-    p_number = params_dict.get("p_number", None)
-    if not p_number:
-        return ("ERROR: P number is missing in input dictionary.")
-
-    populated_template = template.render(
-        p_number=p_number
-    )
-
-    resp = requests.post(
-        virk_url,
-        auth=(virk_usr, virk_pwd),
-        json=json.loads(populated_template)
-    )
-    if not resp.status_code == 200:
-        print(resp.status_code, resp.text)
-        return
-
-    hits = resp.json().get("hits").get("hits")
-
-    orgs = []
-
-    for org in hits:
-        org_info = extract_org_info_from_produktionsenhed(org)
         orgs.append(org_info)
     return orgs
 
