@@ -42,19 +42,116 @@ def extract_org_info_from_virksomhed(org_dict):
     }
 
 
-def get_cvr_no(params_dict):
-    """Explanation pending
-    """
+def val_cred_and_url(params_dict):
 
-    template = env.get_template('get_cvr_no_query.j2')
 
     virk_usr = params_dict.get("virk_usr", None)
     virk_pwd = params_dict.get("virk_pwd", None)
     virk_url = params_dict.get("virk_url", None)
 
-    # No login, no search.
     if virk_usr and virk_pwd and virk_url:
+        return True
+    else:
+        return False
 
+
+def get_org_info(params_dict):
+    """Explanation pending
+    """
+
+    if val_cred_and_url(params_dict):
+
+        cvr = params_dict.get("cvr", None)
+
+        # If logged in then these params are the mininimum requirements.
+        if cvr:
+
+            here = os.path.dirname(os.path.abspath(__file__))
+            template = os.path.join(here, 'query.j2')
+            with open(template, "r") as filestream:
+                template_string = filestream.read()
+
+            template_object = Template(template_string)
+
+            populated_template = template_object.render(
+                cvr=cvr
+            )
+
+            url = params_dict.get("virk_url", None)
+            usr = params_dict.get("virk_usr", None)
+            pwd = params_dict.get("virk_pwd", None)
+            headers = {"Content-type": "application/json; charset=UTF-8"}
+
+            # json.decoder.JSONDecodeError does NOT LIKE the linebreaks in
+            # the ElasticSearch query in the template.
+            # Therefore we remove them before deserializing.
+            payload = json.loads(populated_template.replace('\n', ''))
+
+            resp = requests.post(
+                url,
+                auth=(usr, pwd),
+                json=payload,
+                headers=headers
+            )
+
+            if resp.status_code is 200:
+
+                try:
+
+                    resp_len = len(json.loads(
+                        resp.text).get("hits").get("hits")
+                    )
+
+                    if resp_len == 1:
+
+                        return resp.text
+
+                    else:
+
+                        # TODO: log(input, err) - Remove return statement
+
+                        return "No hit for -->{0}".format(navn)
+
+                except AttributeError as ae:
+
+                    # TODO: log(input, err) - Remove return statement
+
+                    return "AttributeError --> {0}".format(ae)
+
+            # if resp.status_code ...
+            else:
+
+                # TODO: log(input, err) - Remove return statement
+
+                return "HTTP Error --> {0}\nHTTP Body --> {1}".format(
+                    resp.status_code,
+                    resp.text
+                )
+
+        # if org_name ....
+        else:
+
+            # TODO: log(input, err) - Remove return statement
+
+            return "ERROR: CVR Number missing in input dictionary."
+
+    # if virk_usr and ...
+    else:
+
+        # TODO: log(input, err) - Remove return statement
+
+        return "ERROR: Url and/or user credentials" \
+            " are missing in input dictionary."
+
+
+def get_cvr_no(params_dict):
+    """Explanation pending
+    """
+    template = env.get_template('get_cvr_no_query.j2')
+
+    if val_cred_and_url(params_dict):
+
+        cvr = params_dict.get("cvr", None)
         org_name = params_dict.get("org_name", None)
         street_name = params_dict.get("street_name", None)
         house_no_from = params_dict.get("house_no_from", None)
@@ -75,25 +172,29 @@ def get_cvr_no(params_dict):
                 hus_nr_fra=hus_nr_fra,
                 postnr=postnr
             )
-            url = virk_url
-            usr = virk_usr
-            pwd = virk_pwd
+
+            url = params_dict.get("virk_url", None)
+            usr = params_dict.get("virk_usr", None)
+            pwd = params_dict.get("virk_pwd", None)
+
             headers = {"Content-type": "application/json; charset=UTF-8"}
-            payload = json.loads(populated_template)
+
+            # json.decoder.JSONDecodeError does NOT LIKE the linebreaks in
+            # the ElasticSearch query in the template.
+            # Therefore we remove them before deserializing.
+            payload = json.loads(populated_template.replace('\n', ''))
 
             resp = requests.post(
                 url,
                 auth=(usr, pwd),
                 json=payload,
                 headers=headers
-                )
+            )
 
             if resp.status_code == 200:
 
                 try:
-
                     resp_len = len(resp.json().get("hits").get("hits"))
-
                     if resp_len == 1:
                         hits = resp.json().get("hits").get("hits")
                         org_info = extract_org_info_from_virksomhed(hits[0])
@@ -118,7 +219,7 @@ def get_cvr_no(params_dict):
                 return "HTTP Error --> {0}\nHTTP Body --> {1}".format(
                     resp.status_code,
                     resp.text
-                    )
+                )
 
         # if org_name ....
         else:
@@ -126,7 +227,7 @@ def get_cvr_no(params_dict):
             # TODO: log(input, err) - Remove return statement
 
             return "ERROR: Company name and/or address info" \
-                    " missing in input dictionary."
+                " missing in input dictionary."
 
     # if virk_usr and ...
     else:
