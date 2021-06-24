@@ -4,17 +4,45 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# Contributor(s): Heini L. Ovason
+# Contributor(s): Heini L. Ovason, Søren Howe Gersager
 #
 
-import os
 import json
 import requests
-from jinja2 import Template
+
+from jinja2 import Environment, PackageLoader, select_autoescape
+
+env = Environment(
+    loader=PackageLoader("virk_dk"),
+    autoescape=select_autoescape()
+)
+
+
+def extract_org_info_from_virksomhed(org_dict):
+    virksomhed = org_dict.get("_source").get("Vrvirksomhed")
+    cvr_no = virksomhed.get("cvrNummer", "")
+    virk_meta = virksomhed.get("virksomhedMetadata")
+    hoved_branche = virk_meta.get("nyesteHovedbranche")
+    r_status = virk_meta.get("sammensatStatus")
+    r_branchekode = hoved_branche.get("branchekode")
+    r_navn = virk_meta.get("nyesteNavn").get("navn", "")
+    r_adresse = virk_meta.get("nyesteBeliggenhedsadresse")
+    r_vejnavn = r_adresse.get("vejnavn", "")
+    r_husnr = r_adresse.get("husnummerFra", "")
+    r_postnr = r_adresse.get("postnummer", "")
+
+    return {
+        "cvr_no": cvr_no,
+        "navn": r_navn,
+        "vejnavn": r_vejnavn,
+        "husnr": r_husnr,
+        "postnr": r_postnr,
+        "branchekode": r_branchekode,
+        "status": r_status,
+    }
 
 
 def val_cred_and_url(params_dict):
-
     virk_usr = params_dict.get("virk_usr", None)
     virk_pwd = params_dict.get("virk_pwd", None)
     virk_url = params_dict.get("virk_url", None)
@@ -64,7 +92,7 @@ def get_org_info(params_dict):
                 headers=headers
             )
 
-            if resp.status_code is 200:
+            if resp.status_code == 200:
 
                 try:
 
@@ -117,6 +145,7 @@ def get_org_info(params_dict):
 def get_cvr_no(params_dict):
     """Explanation pending
     """
+    template = env.get_template('get_cvr_no_query.j2')
 
     if val_cred_and_url(params_dict):
 
@@ -135,14 +164,7 @@ def get_cvr_no(params_dict):
             hus_nr_fra = house_no_from
             postnr = zipcode
 
-            here = os.path.dirname(os.path.abspath(__file__))
-            template = os.path.join(here, 'query.j2')
-            with open(template, "r") as filestream:
-                template_string = filestream.read()
-
-            template_object = Template(template_string)
-
-            populated_template = template_object.render(
+            populated_template = template.render(
                 navn=navn,
                 vejnavn=vejnavn,
                 hus_nr_fra=hus_nr_fra,
@@ -152,6 +174,7 @@ def get_cvr_no(params_dict):
             url = params_dict.get("virk_url", None)
             usr = params_dict.get("virk_usr", None)
             pwd = params_dict.get("virk_pwd", None)
+
             headers = {"Content-type": "application/json; charset=UTF-8"}
 
             # json.decoder.JSONDecodeError does NOT LIKE the linebreaks in
@@ -166,34 +189,14 @@ def get_cvr_no(params_dict):
                 headers=headers
             )
 
-            if resp.status_code is 200:
+            if resp.status_code == 200:
 
                 try:
-
-                    resp_len = len(json.loads(
-                        resp.text).get("hits").get("hits")
-                    )
-
+                    resp_len = len(resp.json().get("hits").get("hits"))
                     if resp_len == 1:
-
-                        hits = json.loads(resp.text).get("hits").get("hits")
-                        virksomhed = hits[0].get("_source").get("Vrvirksomhed")
-                        cvr_no = virksomhed.get("cvrNummer", "")
-                        virk_meta = virksomhed.get("virksomhedMetadata")
-                        r_navn = virk_meta.get("nyesteNavn").get("navn", "")
-                        r_adresse = virk_meta.get("nyesteBeliggenhedsadresse")
-                        r_vejnavn = r_adresse.get("vejnavn", "")
-                        r_husnr = r_adresse.get("husnummerFra", "")
-                        r_postnr = r_adresse.get("postnummer", "")
-
-                        return {
-                            "cvr_no": cvr_no,
-                            "navn": r_navn,
-                            "vejnavn": r_vejnavn,
-                            "husnr": r_husnr,
-                            "postnr": r_postnr
-                        }
-
+                        hits = resp.json().get("hits").get("hits")
+                        org_info = extract_org_info_from_virksomhed(hits[0])
+                        return org_info
                     else:
 
                         # TODO: log(input, err) - Remove return statement
@@ -230,4 +233,86 @@ def get_cvr_no(params_dict):
         # TODO: log(input, err) - Remove return statement
 
         return "ERROR: Url and/or user credentials" \
-            " are missing in input dictionary."
+                " are missing in input dictionary."
+
+
+def get_org_info_from_cvr(params_dict):
+    """
+    Return an org_info dict from a cvr_number.
+    """
+    template = env.get_template('get_org_info_from_cvr.j2')
+
+    virk_usr = params_dict.get("virk_usr", None)
+    virk_pwd = params_dict.get("virk_pwd", None)
+    virk_url = params_dict.get("virk_url", None)
+
+    if not virk_usr or not virk_pwd or not virk_url:
+        return ("ERROR: Url and/or user credentials"
+                " are missing in input dictionary.")
+
+    cvr_number = params_dict.get("cvr_number", None)
+    if not cvr_number:
+        return ("ERROR: CVR number is missing in input dictionary.")
+
+    populated_template = template.render(
+        cvr_number=cvr_number
+    )
+
+    resp = requests.post(
+        virk_url,
+        auth=(virk_usr, virk_pwd),
+        json=json.loads(populated_template),
+        headers={"Content-type": "application/json; charset=UTF-8"}
+    )
+    if not resp.status_code == 200:
+        print(resp.status_code, resp.text)
+        return
+
+    hits = resp.json().get("hits").get("hits")
+
+    orgs = []
+
+    for org in hits:
+        org_info = extract_org_info_from_virksomhed(org)
+        orgs.append(org_info)
+    return orgs
+
+
+def get_org_info_from_cvr_p_number_or_name(params_dict):
+    """
+    Return an org_info dict from a general search on CVR/P number/Name.
+    """
+    template = env.get_template('get_org_info_from_cvr_p_number_or_name.j2')
+
+    virk_usr = params_dict.get("virk_usr", None)
+    virk_pwd = params_dict.get("virk_pwd", None)
+    virk_url = params_dict.get("virk_url", None)
+
+    if not virk_usr or not virk_pwd or not virk_url:
+        return ("ERROR: Url and/or user credentials"
+                " are missing in input dictionary.")
+
+    search_term = params_dict.get("search_term", None)
+    if not search_term:
+        return ("ERROR: Search term is missing in input dictionary.")
+
+    populated_template = template.render(
+        search_term=search_term
+    )
+    payload = json.loads(populated_template)
+    resp = requests.post(
+        virk_url,
+        auth=(virk_usr, virk_pwd),
+        json=payload,
+    )
+    if not resp.status_code == 200:
+        print(resp.status_code, resp.text)
+        return
+    hits = resp.json().get("hits").get("hits")
+
+    orgs = []
+
+    for org in hits:
+        org_info = extract_org_info_from_virksomhed(org)
+        orgs.append(org_info)
+    return orgs
