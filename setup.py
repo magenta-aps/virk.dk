@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="virk_dk",
-    version="0.0.1",
+    version="1.0.0",
     author="Heini Leander Ovason",
     author_email="heini.ovason@gmail.com",
     description="Integration with The Danish Business Authority Web API.",
@@ -28,6 +28,5 @@ setuptools.setup(
         'requests',
         'urllib3',
     ],
-    package_data={'virk_dk': ['query.j2']},
     include_package_data=True,
 )

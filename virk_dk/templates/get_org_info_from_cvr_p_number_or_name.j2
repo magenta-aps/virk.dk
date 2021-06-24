@@ -1,0 +1,19 @@
+{
+    "_source": [
+        "Vrvirksomhed.cvrNummer",
+        "Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn",
+        "Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse",
+        "Vrvirksomhed.virksomhedMetadata.nyesteHovedbranche",
+        "Vrvirksomhed.virksomhedMetadata.sammensatStatus"
+    ],
+    "query": {
+        "query_string": {
+            "fields": [
+                "Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn",
+                "Vrvirksomhed.virksomhedMetadata.penheder.pNummer",
+                "Vrvirksomhed.cvrNummer"
+            ],
+            "query": "(Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn:{{ search_term }} OR Vrvirksomhed.penheder.pNummer:{{ search_term }} OR Vrvirksomhed.cvrNummer:{{ search_term }})"
+        }
+    }
+}
