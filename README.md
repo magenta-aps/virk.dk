@@ -2,7 +2,7 @@
 
 # virk.dk (EARLY DEVELOPMENT STAGES)
 
-Python REST intergration with **distribution.virk.dk/cvr-permanent/virksomhed/_search**.
+Python REST integration with **distribution.virk.dk/cvr-permanent/virksomhed/_search**.
 
 Initiated by MAGENTA ApS as a part of a *Proof Of Concept* for The Danish Environmental Protection Agency, a.k.a. Miljøstyrelsen.
 
@@ -21,6 +21,12 @@ Mozilla Public License Version 2.0
 
   - **get_org_info(credentials, cvr_no)**
   *Retrieves name- and address information about a given company/organisation.*
+
+  - **get_org_info_from_cvr(credentials, cvr_no)**
+  *Retrieves company/organisation information from a CVR number.*
+
+  - **get_org_info_from_cvr_p_number_or_name**
+  *Retrieves company/organisation information from either CVR number, a P number or by name.*
 
 ### Upcoming features
 
@@ -72,5 +78,30 @@ get_org_input_dict =	{
 result = get_org_info(
     params_dict=get_org_input_dict
     )
+print(result)
+```
+```python
+from virk_dk import get_org_info_from_cvr
+
+input_dict =  {
+  "virk_usr": "<user>",
+  "virk_pwd": "<token>",
+  "virk_url": "http://distribution.virk.dk/cvr-permanent/virksomhed/_search", # note that this could change at some point.
+  "cvr_number": "25052943"
+}
+
+result = get_org_info_from_cvr(params_dict=input_dict)
+print(result)
+```
+```python
+from virk_dk import get_org_info_from_cvr_p_number_or_name
+
+input_dict =  {
+  "virk_usr": "<user>",
+  "virk_pwd": "<token>",
+  "virk_url": "http://distribution.virk.dk/cvr-permanent/virksomhed/_search", # note that this could change at some point.
+  "search_term": "25553489" # could be either CVR number (25052943), P number (1019601052) or company name (Magenta Aps).
+}
+result = get_org_info_from_cvr_p_number_or_name(input_dict)
 print(result)
 ```
