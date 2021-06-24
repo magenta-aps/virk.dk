@@ -43,8 +43,6 @@ def extract_org_info_from_virksomhed(org_dict):
 
 
 def val_cred_and_url(params_dict):
-
-
     virk_usr = params_dict.get("virk_usr", None)
     virk_pwd = params_dict.get("virk_pwd", None)
     virk_url = params_dict.get("virk_url", None)
@@ -94,7 +92,7 @@ def get_org_info(params_dict):
                 headers=headers
             )
 
-            if resp.status_code is 200:
+            if resp.status_code == 200:
 
                 try:
 
