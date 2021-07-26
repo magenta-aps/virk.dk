@@ -25,11 +25,13 @@ def extract_org_info_from_virksomhed(org_dict):
     hoved_branche = virk_meta.get("nyesteHovedbranche")
     r_status = virk_meta.get("sammensatStatus")
     r_branchekode = hoved_branche.get("branchekode")
+    r_branchetekst = hoved_branche.get("branchetekst")
     r_navn = virk_meta.get("nyesteNavn").get("navn", "")
     r_adresse = virk_meta.get("nyesteBeliggenhedsadresse")
     r_vejnavn = r_adresse.get("vejnavn", "")
     r_husnr = r_adresse.get("husnummerFra", "")
     r_postnr = r_adresse.get("postnummer", "")
+    r_postdistrikt = r.adresse.get("postdistrikt", "")
 
     return {
         "cvr_no": cvr_no,
@@ -37,7 +39,9 @@ def extract_org_info_from_virksomhed(org_dict):
         "vejnavn": r_vejnavn,
         "husnr": r_husnr,
         "postnr": r_postnr,
+        "postdistrikt": r_postdistrikt,
         "branchekode": r_branchekode,
+        "branchetekst": r_branchetekst,
         "status": r_status,
     }
 
@@ -61,7 +65,7 @@ def get_org_info(params_dict):
 
         cvr = params_dict.get("cvr", None)
 
-        # If logged in then these params are the mininimum requirements.
+        # If logged in then these params are the minimum requirements.
         if cvr:
 
             here = os.path.dirname(os.path.abspath(__file__))
