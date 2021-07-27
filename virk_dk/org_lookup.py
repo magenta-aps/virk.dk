@@ -31,7 +31,7 @@ def extract_org_info_from_virksomhed(org_dict):
     r_vejnavn = r_adresse.get("vejnavn", "")
     r_husnr = r_adresse.get("husnummerFra", "")
     r_postnr = r_adresse.get("postnummer", "")
-    r_postdistrikt = r.adresse.get("postdistrikt", "")
+    r_postdistrikt = r_adresse.get("postdistrikt", "")
 
     return {
         "cvr_no": cvr_no,
