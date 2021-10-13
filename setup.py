@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="virk_dk",
-    version="1.1.0",
+    version="1.1.1",
     author="Heini Leander Ovason",
     author_email="heini.ovason@gmail.com",
     description="Integration with The Danish Business Authority Web API.",
