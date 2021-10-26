@@ -16,11 +16,8 @@ Mozilla Public License Version 2.0
 
 ### Features
 
-  - **get_cvr_no(credentials, company_name, streetname, house_no, zipcode)**
-  *Retrieves the CVR number (public unique identifier) of a given Danish company/organisation.*
-
-  - **get_org_info(credentials, cvr_no)**
-  *Retrieves name- and address information about a given company/organisation.*
+  - **get_org_info_from_org_name_and_address(credentials, company_name, streetname, house_no, zipcode)**
+  *Retrieves company/organisation information from a company name and address information.*
 
   - **get_org_info_from_cvr(credentials, cvr_no)**
   *Retrieves company/organisation information from a CVR number.*
@@ -50,9 +47,9 @@ $ cd virk.dk && python setup.py install
 ### Example of implementation
 
 ```python
-from virk_dk import get_cvr_no
+from virk_dk import get_org_info_from_org_name_and_address
 
-get_cvrnr_input_dict =	{
+input_dict =	{
   "virk_usr": "<user>",
   "virk_pwd": "<token>",
   "virk_url": "http://distribution.virk.dk/cvr-permanent/virksomhed/_search",
@@ -61,23 +58,9 @@ get_cvrnr_input_dict =	{
   "house_no_from": "43",
   "zipcode": "1112"
 }
-result = get_cvr_no(
-    params_dict=get_cvrnr_input_dict
-    )
-print(result)
-```
-```python
-from virk_dk import get_org_info
-
-get_org_input_dict =	{
-  "virk_usr": "<user>",
-  "virk_pwd": "<token>",
-  "virk_url": "http://distribution.virk.dk/cvr-permanent/virksomhed/_search",
-  "cvr": "25052943"
-}
-result = get_org_info(
-    params_dict=get_org_input_dict
-    )
+result = get_org_info_from_org_name_and_address(
+    params_dict=input_dict
+)
 print(result)
 ```
 ```python

@@ -14,9 +14,6 @@
                 "Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.vejnavn"
             ],
             "query": "(
-                {% if cvr|length %}
-                    Vrvirksomhed.cvrNummer:{{ cvr }} 
-                {% endif %}
                 {% if navn|length %}
                     Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn:{{ navn }} 
                 {% endif %}

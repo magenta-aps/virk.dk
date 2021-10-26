@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="virk_dk",
-    version="1.1.1",
+    version="1.2.0",
     author="Heini Leander Ovason",
     author_email="heini.ovason@gmail.com",
     description="Integration with The Danish Business Authority Web API.",
@@ -18,15 +18,15 @@ setuptools.setup(
         "License :: OSI Approved :: Mozilla Public License Version 2.0",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires=">=3.6",
     install_requires=[
-        'certifi',
-        'chardet',
-        'idna',
-        'Jinja2',
-        'MarkupSafe',
-        'requests',
-        'urllib3',
+        "certifi",
+        "chardet",
+        "idna",
+        "Jinja2",
+        "MarkupSafe",
+        "requests",
+        "urllib3",
     ],
     include_package_data=True,
 )
