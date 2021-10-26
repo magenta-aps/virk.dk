@@ -6,7 +6,6 @@
 #
 # Contributor(s): Heini L. Ovason, Søren Howe Gersager
 #
-
 import json
 import requests
 
@@ -19,6 +18,9 @@ env = Environment(
 
 
 def extract_org_info_from_virksomhed(org_dict):
+    """
+    Extract an org_info dict from Virk virksomhed JSON object.
+    """
     virksomhed = org_dict.get("_source").get("Vrvirksomhed")
     cvr_no = virksomhed.get("cvrNummer", "")
     virk_meta = virksomhed.get("virksomhedMetadata")
@@ -46,203 +48,85 @@ def extract_org_info_from_virksomhed(org_dict):
     }
 
 
-def val_cred_and_url(params_dict):
+def get_org_info_from_org_name_and_address(params_dict):
+    """
+    Return an org_info dict from an org_name and address info.
+
+    Arguments:
+    virk_usr - Virk user
+    virk_pwd - Virk password
+    virk_url - Virk endpoint URL
+    org_name
+    street_name
+    house_no_from
+    zipcode
+    """
+    template = env.get_template('get_org_info_from_org_name_and_address.j2')
+
     virk_usr = params_dict.get("virk_usr", None)
     virk_pwd = params_dict.get("virk_pwd", None)
     virk_url = params_dict.get("virk_url", None)
 
-    if virk_usr and virk_pwd and virk_url:
-        return True
-    else:
-        return False
+    if not virk_usr or not virk_pwd or not virk_url:
+        return ("ERROR: Url and/or user credentials"
+                " are missing in input dictionary.")
 
+    org_name = params_dict.get("org_name", None)
+    street_name = params_dict.get("street_name", None)
+    house_no_from = params_dict.get("house_no_from", None)
+    zipcode = params_dict.get("zipcode", None)
 
-def get_org_info(params_dict):
-    """Explanation pending
-    """
+    # If logged in then these params are the mininimum requirements.
+    if not org_name or not street_name or not house_no_from or not zipcode:
+        return ("ERROR: Address info is missing in input dictionary.")
 
-    if val_cred_and_url(params_dict):
+    navn = org_name.replace("/", "\\\\/")
+    vejnavn = street_name
+    # TODO: house letters need to be separate query param!
+    hus_nr_fra = house_no_from
+    postnr = zipcode
 
-        cvr = params_dict.get("cvr", None)
+    populated_template = template.render(
+        navn=navn,
+        vejnavn=vejnavn,
+        hus_nr_fra=hus_nr_fra,
+        postnr=postnr
+    )
 
-        # If logged in then these params are the minimum requirements.
-        if cvr:
+    # json.decoder.JSONDecodeError does NOT LIKE the linebreaks in
+    # the ElasticSearch query in the template.
+    # Therefore we remove them before deserializing.
+    payload = populated_template.replace('\n', '')
 
-            here = os.path.dirname(os.path.abspath(__file__))
-            template = os.path.join(here, 'query.j2')
-            with open(template, "r") as filestream:
-                template_string = filestream.read()
+    resp = requests.post(
+        virk_url,
+        auth=(virk_usr, virk_pwd),
+        json=json.loads(payload),
+        headers={"Content-type": "application/json; charset=UTF-8"}
+    )
+    if not resp.status_code == 200:
+        print(resp.status_code, resp.text)
+        return
 
-            template_object = Template(template_string)
+    hits = resp.json().get("hits").get("hits")
 
-            populated_template = template_object.render(
-                cvr=cvr
-            )
+    orgs = []
 
-            url = params_dict.get("virk_url", None)
-            usr = params_dict.get("virk_usr", None)
-            pwd = params_dict.get("virk_pwd", None)
-            headers = {"Content-type": "application/json; charset=UTF-8"}
-
-            # json.decoder.JSONDecodeError does NOT LIKE the linebreaks in
-            # the ElasticSearch query in the template.
-            # Therefore we remove them before deserializing.
-            payload = json.loads(populated_template.replace('\n', ''))
-
-            resp = requests.post(
-                url,
-                auth=(usr, pwd),
-                json=payload,
-                headers=headers
-            )
-
-            if resp.status_code == 200:
-
-                try:
-
-                    resp_len = len(json.loads(
-                        resp.text).get("hits").get("hits")
-                    )
-
-                    if resp_len == 1:
-
-                        return resp.text
-
-                    else:
-
-                        # TODO: log(input, err) - Remove return statement
-
-                        return "No hit for -->{0}".format(navn)
-
-                except AttributeError as ae:
-
-                    # TODO: log(input, err) - Remove return statement
-
-                    return "AttributeError --> {0}".format(ae)
-
-            # if resp.status_code ...
-            else:
-
-                # TODO: log(input, err) - Remove return statement
-
-                return "HTTP Error --> {0}\nHTTP Body --> {1}".format(
-                    resp.status_code,
-                    resp.text
-                )
-
-        # if org_name ....
-        else:
-
-            # TODO: log(input, err) - Remove return statement
-
-            return "ERROR: CVR Number missing in input dictionary."
-
-    # if virk_usr and ...
-    else:
-
-        # TODO: log(input, err) - Remove return statement
-
-        return "ERROR: Url and/or user credentials" \
-            " are missing in input dictionary."
-
-
-def get_cvr_no(params_dict):
-    """Explanation pending
-    """
-    template = env.get_template('get_cvr_no_query.j2')
-
-    if val_cred_and_url(params_dict):
-
-        cvr = params_dict.get("cvr", None)
-        org_name = params_dict.get("org_name", None)
-        street_name = params_dict.get("street_name", None)
-        house_no_from = params_dict.get("house_no_from", None)
-        zipcode = params_dict.get("zipcode", None)
-
-        # If logged in then these params are the mininimum requirements.
-        if org_name and street_name and house_no_from and zipcode:
-
-            navn = org_name.replace("/", "\\\\/")
-            vejnavn = street_name
-            # TODO: house letters need to be separate query param!
-            hus_nr_fra = house_no_from
-            postnr = zipcode
-
-            populated_template = template.render(
-                navn=navn,
-                vejnavn=vejnavn,
-                hus_nr_fra=hus_nr_fra,
-                postnr=postnr
-            )
-
-            url = params_dict.get("virk_url", None)
-            usr = params_dict.get("virk_usr", None)
-            pwd = params_dict.get("virk_pwd", None)
-
-            headers = {"Content-type": "application/json; charset=UTF-8"}
-
-            # json.decoder.JSONDecodeError does NOT LIKE the linebreaks in
-            # the ElasticSearch query in the template.
-            # Therefore we remove them before deserializing.
-            payload = json.loads(populated_template.replace('\n', ''))
-
-            resp = requests.post(
-                url,
-                auth=(usr, pwd),
-                json=payload,
-                headers=headers
-            )
-
-            if resp.status_code == 200:
-
-                try:
-                    resp_len = len(resp.json().get("hits").get("hits"))
-                    if resp_len == 1:
-                        hits = resp.json().get("hits").get("hits")
-                        org_info = extract_org_info_from_virksomhed(hits[0])
-                        return org_info
-                    else:
-
-                        # TODO: log(input, err) - Remove return statement
-
-                        return "No hit for -->{0}".format(navn)
-
-                except AttributeError as ae:
-
-                    # TODO: log(input, err) - Remove return statement
-
-                    return "AttributeError --> {0}".format(ae)
-
-            # if resp.status_code ...
-            else:
-
-                # TODO: log(input, err) - Remove return statement
-
-                return "HTTP Error --> {0}\nHTTP Body --> {1}".format(
-                    resp.status_code,
-                    resp.text
-                )
-
-        # if org_name ....
-        else:
-
-            # TODO: log(input, err) - Remove return statement
-
-            return "ERROR: Company name and/or address info" \
-                " missing in input dictionary."
-
-    # if virk_usr and ...
-    else:
-
-        # TODO: log(input, err) - Remove return statement
-
-        return "ERROR: Url and/or user credentials" \
-                " are missing in input dictionary."
+    for org in hits:
+        org_info = extract_org_info_from_virksomhed(org)
+        orgs.append(org_info)
+    return orgs
 
 
 def get_org_info_from_cvr(params_dict):
     """
-    Return an org_info dict from a cvr_number.
+    Return an org_info dict from an *active* cvr_number.
+
+    Arguments:
+    virk_usr - Virk user
+    virk_pwd - Virk password
+    virk_url - Virk endpoint URL
+    cvr_number - cvr_number
     """
     template = env.get_template('get_org_info_from_cvr.j2')
 
@@ -284,7 +168,13 @@ def get_org_info_from_cvr(params_dict):
 
 def get_org_info_from_cvr_p_number_or_name(params_dict):
     """
-    Return an org_info dict from a general search on CVR/P number/Name.
+    Return an org_info dict from a general search on *active* CVR/P number/Name.
+
+    Arguments:
+    virk_usr - Virk user
+    virk_pwd - Virk password
+    virk_url - Virk endpoint URL
+    search_term - term for searching
     """
     template = env.get_template('get_org_info_from_cvr_p_number_or_name.j2')
 

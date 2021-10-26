@@ -1,7 +1,25 @@
 {
-  "query": {
-    "term": {
-      "Vrvirksomhed.cvrNummer": "{{cvr_number}}"
-    }
-  }
+   "_source":[
+      "Vrvirksomhed.cvrNummer",
+      "Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn",
+      "Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse",
+      "Vrvirksomhed.virksomhedMetadata.nyesteHovedbranche",
+      "Vrvirksomhed.virksomhedMetadata.sammensatStatus",
+      "Vrvirksomhed.livsforloeb.periode.gyldigTil"
+   ],
+   "query":{
+      "bool":{
+         "must":{
+            "term":{
+               "Vrvirksomhed.cvrNummer":"{{cvr_number}}"
+            }
+         },
+         "must_not":{
+            "exists":{
+               "field":"Vrvirksomhed.livsforloeb.periode.gyldigTil"
+            }
+         }
+      }
+   },
+   "size":1
 }
