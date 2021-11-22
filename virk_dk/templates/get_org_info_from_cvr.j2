@@ -4,21 +4,63 @@
       "Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn",
       "Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse",
       "Vrvirksomhed.virksomhedMetadata.nyesteHovedbranche",
-      "Vrvirksomhed.virksomhedMetadata.sammensatStatus",
-      "Vrvirksomhed.livsforloeb.periode.gyldigTil"
+      "Vrvirksomhed.virksomhedMetadata.sammensatStatus"
    ],
    "query":{
       "bool":{
-         "must":{
-            "term":{
-               "Vrvirksomhed.cvrNummer":"{{cvr_number}}"
+         "must":[
+            {
+               "term":{
+                  "Vrvirksomhed.cvrNummer":"{{cvr_number}}"
+               }
+            },
+            {
+               "bool":{
+                  "should":[
+                     {
+                        "term":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"NORMAL"
+                        }
+                     },
+                     {
+                        "term":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"Aktiv"
+                        }
+                     },
+                     {
+                        "term":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"UNDERTVANGSOPLØSNING"
+                        }
+                     },
+                     {
+                        "term":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"UNDERFRIVILLIGLIKVIDATION"
+                        }
+                     },
+                     {
+                        "term":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"UNDERKONKURS"
+                        }
+                     },
+                     {
+                        "term":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"UNDERREKONSTRUKION"
+                        }
+                     },
+                     {
+                        "term":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"UNDERREASSUMERING"
+                        }
+                     },
+                     {
+                        "term":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"OMDANNET"
+                        }
+                     }
+                  ]
+               }
             }
-         },
-         "must_not":{
-            "exists":{
-               "field":"Vrvirksomhed.livsforloeb.periode.gyldigTil"
-            }
-         }
+         ]
       }
    },
    "size":1
