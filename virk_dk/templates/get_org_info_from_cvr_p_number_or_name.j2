@@ -1,31 +1,72 @@
 {
-"_source":[
+   "_source":[
       "Vrvirksomhed.cvrNummer",
       "Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn",
       "Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse",
       "Vrvirksomhed.virksomhedMetadata.nyesteHovedbranche",
       "Vrvirksomhed.virksomhedMetadata.sammensatStatus",
-      "Vrvirksomhed.virksomhedMetadata.penheder.pNummer",
-      "Vrvirksomhed.livsforloeb.periode.gyldigTil"
+      "Vrvirksomhed.virksomhedMetadata.penheder.pNummer"
    ],
    "query":{
       "bool":{
-         "must":{
-            "query_string":{
-               "fields":[
-                  "Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn",
-                  "Vrvirksomhed.virksomhedMetadata.penheder.pNummer",
-                  "Vrvirksomhed.cvrNummer"
-               ],
-               "query": "(Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn:{{ search_term }} OR Vrvirksomhed.penheder.pNummer:{{ search_term }} OR Vrvirksomhed.cvrNummer:{{ search_term }})"
+         "must":[
+            {
+               "query_string":{
+                  "fields":[
+                     "Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn",
+                     "Vrvirksomhed.virksomhedMetadata.penheder.pNummer",
+                     "Vrvirksomhed.cvrNummer"
+                  ],
+                  "query":"(Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn:{{ search_term }} OR Vrvirksomhed.penheder.pNummer:{{ search_term }} OR Vrvirksomhed.cvrNummer:{{ search_term }})"
+               }
+            },
+            {
+               "bool":{
+                  "should":[
+                     {
+                        "match":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"NORMAL"
+                        }
+                     },
+                     {
+                        "match":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"Aktiv"
+                        }
+                     },
+                     {
+                        "match":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"UNDERTVANGSOPLØSNING"
+                        }
+                     },
+                     {
+                        "match":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"UNDERFRIVILLIGLIKVIDATION"
+                        }
+                     },
+                     {
+                        "match":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"UNDERKONKURS"
+                        }
+                     },
+                     {
+                        "match":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"UNDERREKONSTRUKION"
+                        }
+                     },
+                     {
+                        "match":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"UNDERREASSUMERING"
+                        }
+                     },
+                     {
+                        "match":{
+                           "Vrvirksomhed.virksomhedMetadata.sammensatStatus":"OMDANNET"
+                        }
+                     }
+                  ]
+               }
             }
-         },
-
-         "must_not":{
-            "exists":{
-               "field":"Vrvirksomhed.livsforloeb.periode.gyldigTil"
-            }
-         }
+         ]
       }
    }
 }
