@@ -30,6 +30,7 @@ def extract_org_info_from_virksomhed(org_dict):
     r_branchetekst = hoved_branche.get("branchetekst")
     r_navn = virk_meta.get("nyesteNavn").get("navn", "")
     r_adresse = virk_meta.get("nyesteBeliggenhedsadresse")
+    r_conavn = r_adresse.get("conavn", "")
     r_vejnavn = r_adresse.get("vejnavn", "")
     r_husnr = r_adresse.get("husnummerFra", "")
     r_postnr = r_adresse.get("postnummer", "")
@@ -38,6 +39,7 @@ def extract_org_info_from_virksomhed(org_dict):
     return {
         "cvr_no": cvr_no,
         "navn": r_navn,
+        "conavn": r_conavn,
         "vejnavn": r_vejnavn,
         "husnr": r_husnr,
         "postnr": r_postnr,
